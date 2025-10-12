@@ -1,28 +1,42 @@
+# .render.yaml at the root of SOCAPP
+
 services:
+  # === Backend (FastAPI) ===
   - type: web
     name: socapp-backend
     runtime: python
     plan: free
-    rootDir: .
-    buildCommand: pip install -r requirements.txt --only-binary=:all:
+    rootDir: .                         # Run from repo root
+    buildCommand: pip install -r requirements.txt --only-binary=all
     startCommand: uvicorn backendsoc.main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - "NEO4J_URI="
-      - "NEO4J_USER="
-      - "NEO4J_PASSWORD="
-      - "NEO4J_DATABASE="
-      - "AURA_INSTANCEID="
-      - "AURA_INSTANCENAME="
-      - "JWT_SECRET_KEY="
-      - "JWT_ALGORITHM="
-      - "ACCESS_TOKEN_EXPIRE_MINUTES="
+      - key: NEO4J_URI
+        sync: false
+      - key: NEO4J_USER
+        sync: false
+      - key: NEO4J_PASSWORD
+        sync: false
+      - key: NEO4J_DATABASE
+        sync: false
+      - key: AURA_INSTANCEID
+        sync: false
+      - key: AURA_INSTANCENAME
+        sync: false
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: JWT_ALGORITHM
+        sync: false
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        sync: false
 
+  # === Frontend (React / Vite) ===
   - type: web
     name: socapp-frontend
     runtime: node
     plan: free
-    rootDir: hays
+    rootDir: hays                        # Frontend folder
     buildCommand: npm install && npm run build
     startCommand: npx serve -s dist
     envVars:
-      - "VITE_API_URL="
+      - key: VITE_API_URL
+        sync: false
