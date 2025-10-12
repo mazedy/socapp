@@ -1,0 +1,32 @@
+services:
+  # === Backend (FastAPI) ===
+  - type: web
+    name: socapp-backend
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backendsoc/requirements.txt --only-binary=all
+    startCommand: uvicorn backendsoc.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: PIP_ONLY_BINARY
+        value: "all"
+      - key: NEO4J_URI
+        sync: false
+      - key: NEO4J_USERNAME
+        sync: false
+      - key: NEO4J_PASSWORD
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+
+  # === Frontend (React / Vite) ===
+  - type: web
+    name: socapp-frontend
+    runtime: node
+    plan: free
+    buildCommand: cd hays && npm install && npm run build
+    startCommand: cd hays && npx serve -s dist
+    envVars:
+      - key: PORT
+        value: 3000
