@@ -1,4 +1,4 @@
-# .render.yaml at the root of socapp
+# .render.yaml at the root of SOCAPP
 
 services:
   # === Backend (FastAPI) ===
@@ -6,9 +6,9 @@ services:
     name: socapp-backend
     runtime: python
     plan: free
-    rootDir: .         # Set working directory to backend
+    rootDir: .                         # Run from repo root
     buildCommand: pip install -r requirements.txt --only-binary=all
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn backendsoc.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.13.4
@@ -36,7 +36,7 @@ services:
     name: socapp-frontend
     runtime: node
     plan: free
-    rootDir: hays                 # Set working directory to frontend
+    rootDir: hays                        # Frontend folder
     buildCommand: npm install && npm run build
     startCommand: npx serve -s dist
     envVars:
