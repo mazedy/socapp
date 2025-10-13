@@ -7,7 +7,10 @@ sio = socketio.AsyncServer(
 )
 
 # Expose ASGI app to be mounted in main.py
-socket_app = socketio.ASGIApp(sio)
+# When mounting at "/socket.io" in main.py, Starlette strips the prefix.
+# Setting socketio_path="" makes the inner app listen at "/" (post-strip),
+# preventing "Expected ASGI message 'websocket.accept'..." errors.
+socket_app = socketio.ASGIApp(sio, socketio_path="")
 
 # Optional: room helpers to scope messages by conversation id
 @sio.event
