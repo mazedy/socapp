@@ -11,10 +11,12 @@ app = FastAPI(title="College Social Media Backend")
 
 # ✅ Add CORS FIRST
 origins = [
-    "http://localhost:5173",
     "https://socapp-frontend.onrender.com",
+    "https://socapp-backend.onrender.com",
     "http://localhost",
     "http://127.0.0.1",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 if settings.FRONTEND_ORIGIN and settings.FRONTEND_ORIGIN not in origins:
     origins.append(settings.FRONTEND_ORIGIN)
