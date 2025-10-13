@@ -70,19 +70,23 @@ export default function PostCard({ post, onChanged }) {
         {/* Avatar */}
         <Link to={`/profile/${userData.id}`} className="shrink-0">
           {(() => {
+            const placeholder = '/avatar-placeholder.svg';
             const raw = userData.avatar_url || userData.profile_pic;
             const src = raw
-                ? raw.startsWith('http')
-                  ? raw
-                  : `${BASE}${raw.startsWith('/') ? '' : '/'}${raw}`
-                : null;
+              ? raw.startsWith('http')
+                ? raw
+                : `${BASE}${raw.startsWith('/') ? '' : '/'}${raw}`
+              : placeholder;
 
             return (
               <img
-                src={src || placeholder}
+                src={src}
                 alt={userData.username}
                 className="h-12 w-12 rounded-full object-cover border-2 border-purple-300"
-                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = placeholder; }}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = placeholder;
+                }}
               />
             );
           })()}
