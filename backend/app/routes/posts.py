@@ -11,6 +11,9 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 UPLOADS_DIR = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
+# ✅ Your Render backend URL (update if yours is different)
+BACKEND_URL = "https://socapp-backend.onrender.com"
+
 
 @router.post("/")
 async def create_post(
@@ -31,7 +34,8 @@ async def create_post(
             file_path = os.path.join(UPLOADS_DIR, filename)
             with open(file_path, "wb") as f:
                 f.write(await image.read())
-            image_url = f"/uploads/{filename}"
+            # ✅ Return full URL so frontend can access image
+            image_url = f"{BACKEND_URL}/uploads/{filename}"
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to save image: {e}")
 
@@ -70,6 +74,7 @@ async def create_post(
             "avatar_url": current_user.get("avatar_url"),
         },
     }
+
 
 @router.get("/")
 def get_posts(user_id: Optional[str] = None):
@@ -153,7 +158,7 @@ async def update_post(
         if not rel:
             raise HTTPException(status_code=403, detail="Not authorized")
 
-    # Determine payload source: JSON or multipart/form
+    # Determine payload source
     ct = request.headers.get("content-type", "").lower()
     json_payload: Optional[dict] = None
     if ct.startswith("application/json"):
@@ -168,11 +173,10 @@ async def update_post(
         if isinstance(val, str):
             new_content = val
     else:
-        # form case
         if isinstance(content, str):
             new_content = content
 
-    # Handle optional image file (multipart only)
+    # Handle optional image
     new_image_url: Optional[str] = None
     if image is not None:
         try:
@@ -183,7 +187,8 @@ async def update_post(
             file_path = os.path.join(UPLOADS_DIR, filename)
             with open(file_path, "wb") as f:
                 f.write(await image.read())
-            new_image_url = f"/uploads/{filename}"
+            # ✅ Full backend URL again
+            new_image_url = f"{BACKEND_URL}/uploads/{filename}"
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to save image: {e}")
 
@@ -257,5 +262,3 @@ def like_post(post_id: str, current_user: dict = Depends(get_current_user)):
         ).single()
 
         return {"post_id": post_id, "likes": count_rec["likes"]}
-
-        
