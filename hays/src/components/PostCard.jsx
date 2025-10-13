@@ -71,8 +71,12 @@ export default function PostCard({ post, onChanged }) {
         <Link to={`/profile/${userData.id}`} className="shrink-0">
           {(() => {
             const raw = userData.avatar_url || userData.profile_pic;
-            const src = raw ? (raw.startsWith('/uploads') ? `${BASE}${raw}` : raw) : null;
-            const placeholder = '/avatar-placeholder.svg';
+            const src = raw
+                ? raw.startsWith('http')
+                  ? raw
+                  : `${BASE}${raw.startsWith('/') ? '' : '/'}${raw}`
+                : null;
+
             return (
               <img
                 src={src || placeholder}
@@ -112,11 +116,16 @@ export default function PostCard({ post, onChanged }) {
           {/* Post Image */}
           {post.image_url && (
             <img
-              src={post.image_url.startsWith('http') ? post.image_url : `${BASE}${post.image_url}`}
+              src={
+                post.image_url.startsWith('http')
+                  ? post.image_url
+                  : `${BASE}${post.image_url.startsWith('/') ? '' : '/'}${post.image_url}`
+              }
               alt="post"
               className="rounded-2xl mb-3 max-h-[28rem] w-full object-cover border border-purple-100 shadow-md"
             />
           )}
+
 
           {/* Action Buttons */}
           <div className="flex items-center gap-6 pt-2 border-t border-purple-100 mt-2">
