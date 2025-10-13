@@ -20,7 +20,13 @@ except Exception:
     _settings = None
 
 NEO4J_URI = os.getenv("NEO4J_URI") or (getattr(_settings, "NEO4J_URI", None) if _settings else None)
-NEO4J_USER = os.getenv("NEO4J_USER") or (getattr(_settings, "NEO4J_USER", None) if _settings else None)
+# Accept both NEO4J_USER and NEO4J_USERNAME for compatibility with Render env naming
+NEO4J_USER = (
+    os.getenv("NEO4J_USER")
+    or os.getenv("NEO4J_USERNAME")
+    or (getattr(_settings, "NEO4J_USER", None) if _settings else None)
+    or (getattr(_settings, "NEO4J_USERNAME", None) if _settings else None)
+)
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD") or (getattr(_settings, "NEO4J_PASSWORD", None) if _settings else None)
 NEO4J_DATABASE = os.getenv("NEO4J_DATABASE") or (getattr(_settings, "NEO4J_DATABASE", "neo4j") if _settings else "neo4j")
 
@@ -45,7 +51,7 @@ def run_query(cypher: str, **params):
     global _driver
     attempts = 0
     last_err: Exception | None = None
-    while attempts < 2:
+    while attempts < 3:
         attempts += 1
         try:
             drv = _get_driver()
