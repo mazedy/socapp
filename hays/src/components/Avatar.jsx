@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '@/api/axios';
 
 export default function Avatar({
   src,
@@ -15,9 +16,19 @@ export default function Avatar({
   const dim = typeof size === 'number' ? `${size}px` : size;
   const borderCls = showBorder ? 'border-2 border-purple-300' : '';
 
-  const imageEl = src ? (
+  // Resolve image URL: if src is relative (e.g., /uploads/...), prefix with API_BASE_URL
+  const resolvedSrc = (() => {
+    if (!src) return null;
+    const s = String(src);
+    const isAbsolute = /^https?:\/\//i.test(s) || s.startsWith('data:');
+    if (isAbsolute) return s;
+    if (s.startsWith('/')) return `${API_BASE_URL}${s}`;
+    return `${API_BASE_URL}/${s}`;
+  })();
+
+  const imageEl = resolvedSrc ? (
     <img
-      src={src}
+      src={resolvedSrc}
       alt={alt}
       style={{ width: dim, height: dim }}
       className={`rounded-full object-cover ${borderCls} ${className}`}
