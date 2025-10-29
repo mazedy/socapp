@@ -5,14 +5,45 @@ from uuid import uuid4
 from datetime import datetime
 from typing import Optional
 import os
+import cloudinary.uploader
+from fastapi import status
+import logging
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
-
-UPLOADS_DIR = os.path.join(os.getcwd(), "uploads")
-os.makedirs(UPLOADS_DIR, exist_ok=True)
+logger = logging.getLogger(__name__)
 
 # ✅ Your Render backend URL (update if yours is different)
 BACKEND_URL = "https://socapp-backend.onrender.com"
+
+async def upload_to_cloudinary(file: UploadFile, folder: str = "posts") -> str:
+    """Helper function to upload file to Cloudinary"""
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only image files are allowed"
+        )
+    
+    try:
+        # Read file contents
+        file_content = await file.read()
+        
+        # Upload to Cloudinary
+        result = cloudinary.uploader.upload(
+            file_content,
+            folder=folder,
+            resource_type="auto",
+            use_filename=True,
+            unique_filename=True,
+            overwrite=False
+        )
+        
+        return result["secure_url"]
+    except Exception as e:
+        logger.error(f"Error uploading to Cloudinary: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to upload image: {str(e)}"
+        )
 
 
 @router.post("/")
@@ -26,18 +57,7 @@ async def create_post(
 
     image_url = None
     if image is not None:
-        try:
-            _, ext = os.path.splitext(image.filename or "")
-            if not ext:
-                ext = ".jpg"
-            filename = f"{uuid4()}{ext}"
-            file_path = os.path.join(UPLOADS_DIR, filename)
-            with open(file_path, "wb") as f:
-                f.write(await image.read())
-            # ✅ Return full URL so frontend can access image
-            image_url = f"{BACKEND_URL}/uploads/{filename}"
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to save image: {e}")
+        image_url = await upload_to_cloudinary(image, folder="posts")
 
     with db.get_session() as session:
         session.run(
@@ -168,41 +188,56 @@ async def update_post(
             json_payload = None
 
     new_content: Optional[str] = None
-    if json_payload is not None:
-        val = json_payload.get("content") if isinstance(json_payload, dict) else None
-        if isinstance(val, str):
-            new_content = val
+    new_image: Optional[UploadFile] = None
+    
+    if json_payload:
+        new_content = json_payload.get("content")
+        # For JSON, we expect a base64 or URL for the image
+        # This is a simplified example - you might need to handle base64 uploads separately
+        pass
     else:
-        if isinstance(content, str):
-            new_content = content
+        new_content = content
+        new_image = image
 
-    # Handle optional image
-    new_image_url: Optional[str] = None
-    if image is not None:
-        try:
-            _, ext = os.path.splitext(image.filename or "")
-            if not ext:
-                ext = ".jpg"
-            filename = f"{uuid4()}{ext}"
-            file_path = os.path.join(UPLOADS_DIR, filename)
-            with open(file_path, "wb") as f:
-                f.write(await image.read())
-            # ✅ Full backend URL again
-            new_image_url = f"{BACKEND_URL}/uploads/{filename}"
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to save image: {e}")
+    # Update post
+    with db.get_session() as session:
+        # If new image is provided, update it
+        if new_image:
+            try:
+                image_url = await upload_to_cloudinary(new_image, folder="posts")
+                
+                session.run(
+                    """
+                    MATCH (p:Post {id: $id})
+                    SET p.image_url = $image_url
+                    RETURN p
+                    """,
+                    id=post_id,
+                    image_url=image_url
+                )
+            except HTTPException as he:
+                raise he
+            except Exception as e:
+                logger.error(f"Error updating post image: {str(e)}")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Failed to update image: {str(e)}"
+                )
 
-    # Apply updates
+    # Apply content updates if any
     updates = {}
     if new_content is not None:
         updates["content"] = new_content
-    if new_image_url is not None:
-        updates["image_url"] = new_image_url
-
+    
+    # If we have updates, apply them
     with db.get_session() as session:
         if updates:
-            session.run("MATCH (p:Post {id: $id}) SET p += $updates", id=post_id, updates=updates)
+            session.run("""
+                MATCH (p:Post {id: $id})
+                SET p += $updates
+            """, id=post_id, updates=updates)
 
+        # Get the updated post with all relationships
         rec = session.run(
             """
             MATCH (u:User)-[:AUTHORED]->(p:Post {id: $id})

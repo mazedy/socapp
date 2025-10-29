@@ -1,23 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, Form, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, Form, File, status
 from app.core.database import db
 from app.core.security import get_current_user
 from app.schemas.user_schema import UserUpdate
 import os
 from uuid import uuid4
-from shutil import copyfileobj
+import cloudinary.uploader
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-UPLOADS_DIR = os.path.join(os.getcwd(), "uploads")
-os.makedirs(UPLOADS_DIR, exist_ok=True)
-
-BASE_URL = "http://127.0.0.1:8000"
+# Cloudinary configuration is handled in core/config.py
 
 def _full_profile_pic(value: str | None) -> str | None:
-    if not value:
-        return None
-    if value.startswith("/uploads/"):
-        return f"{BASE_URL}{value}"
+    """Return the profile picture URL as is (Cloudinary URLs are already full)"""
     return value
 
 def _is_admin(user: dict | None) -> bool:
@@ -163,15 +160,37 @@ async def update_me(
     if bio is not None:
         updates["bio"] = bio
 
-    # Choose whichever field was provided
+    # Handle avatar upload if provided
     upload = avatar or file
     if upload is not None:
-        ext = os.path.splitext(upload.filename)[1] or ".jpg"
-        filename = f"{uuid4()}{ext}"
-        file_path = os.path.join(UPLOADS_DIR, filename)
-        with open(file_path, "wb") as f:
-            copyfileobj(upload.file, f)
-        updates["avatar_url"] = f"/uploads/{filename}"
+        if not upload.content_type.startswith('image/'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only image files are allowed"
+            )
+        
+        try:
+            # Read file contents
+            file_content = await upload.read()
+            
+            # Upload to Cloudinary
+            result = cloudinary.uploader.upload(
+                file_content,
+                folder="profile_pics",
+                resource_type="auto",
+                use_filename=True,
+                unique_filename=True,
+                overwrite=False
+            )
+            
+            updates["avatar_url"] = result["secure_url"]
+            
+        except Exception as e:
+            logger.error(f"Error uploading profile picture: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to upload profile picture: {str(e)}"
+            )
 
     if not updates:
         return current_user
