@@ -33,6 +33,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)  # creates folder if missing
+
 # ✅ Mount static files AFTER CORS
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
