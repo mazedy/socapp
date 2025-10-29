@@ -8,69 +8,72 @@ export default function Navbar() {
   const { token, user, logout } = useAuth();
 
   return (
-    <nav className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+    <nav className="bg-orca-navy text-white shadow-sm">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link
           to={token ? '/' : '/login'}
-          className="font-semibold text-lg tracking-wide hover:opacity-90 transition"
+          className="font-bold text-xl tracking-tight text-white hover:text-orca-soft transition-colors"
         >
-         CSS SOCIAL
+          CCS SOCIAL
         </Link>
         {token ? (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `flex items-center gap-2 px-3 py-1 rounded-full transition ${isActive ? 'bg-white/20' : 'hover:bg-white/10'}`
+                `flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${isActive ? 'bg-orca-ocean text-white' : 'text-orca-pale hover:bg-orca-ocean/50 hover:text-white'}`
               }
             >
-              <FaHome /> <span className="hidden sm:inline">Feed</span>
+              <FaHome className="text-lg" />
+              <span className="hidden sm:inline">Feed</span>
             </NavLink>
             <NavLink
               to="/search"
               className={({ isActive }) =>
-                `flex items-center gap-2 px-3 py-1 rounded-full transition ${isActive ? 'bg-white/20' : 'hover:bg-white/10'}`
+                `flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${isActive ? 'bg-orca-ocean text-white' : 'text-orca-pale hover:bg-orca-ocean/50 hover:text-white'}`
               }
             >
-              <FaSearch /> <span className="hidden sm:inline">Search</span>
+              <FaSearch className="text-lg" />
+              <span className="hidden sm:inline">Search</span>
             </NavLink>
-            {null}
             <NavLink
               to="/people"
               className={({ isActive }) =>
-                `flex items-center gap-2 px-3 py-1 rounded-full transition ${isActive ? 'bg-white/20' : 'hover:bg-white/10'}`
+                `flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${isActive ? 'bg-orca-ocean text-white' : 'text-orca-pale hover:bg-orca-ocean/50 hover:text-white'}`
               }
             >
-              <FaUserFriends /> <span className="hidden sm:inline">People</span>
+              <FaUserFriends className="text-lg" />
+              <span className="hidden sm:inline">People</span>
             </NavLink>
             <NavLink
               to="/me"
               className={({ isActive }) =>
-                `flex items-center gap-2 px-3 py-1 rounded-full transition ${isActive ? 'bg-white/20' : 'hover:bg-white/10'}`
+                `flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${isActive ? 'bg-orca-ocean text-white' : 'text-orca-pale hover:bg-orca-ocean/50 hover:text-white'}`
               }
             >
-              <FaUser /> <span className="hidden sm:inline">{user?.name || 'Profile'}</span>
+              <FaUser className="text-lg" />
+              <span className="hidden sm:inline">{user?.name || 'Profile'}</span>
             </NavLink>
             <button
               onClick={logout}
-              className="ml-2 bg-black/30 hover:bg-black/40 px-3 py-1 rounded-full transition"
+              className="ml-2 px-4 py-2 text-sm font-medium text-white bg-orca-navy hover:bg-orca-ocean rounded-md transition-colors"
             >
-              Get out
+              Sign Out
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <NavLink
               to="/login"
-              className="px-3 py-1 rounded-full bg-black/30 hover:bg-black/40 transition"
+              className="px-4 py-2 text-sm font-medium text-orca-navy bg-orca-pale hover:bg-white rounded-md transition-colors"
             >
               Log in
             </NavLink>
             <NavLink
               to="/register"
-              className="px-3 py-1 rounded-full bg-white text-purple-600 hover:opacity-90 transition"
+              className="px-4 py-2 text-sm font-medium text-white bg-orca-navy hover:bg-orca-ocean rounded-md transition-colors"
             >
-              Register
+              Create Account
             </NavLink>
           </div>
         )}

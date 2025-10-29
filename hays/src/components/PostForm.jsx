@@ -45,15 +45,15 @@ export default function PostForm({ onCreated }) {
   }, [file]);
 
   return (
-    <form onSubmit={submit} className="bg-white rounded-2xl shadow-md p-4 border border-gray-100">
+    <form onSubmit={submit} className="bg-orca-mist rounded-2xl shadow-md p-4 border border-orca-soft/50">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-300"
+        className="w-full border border-orca-soft/50 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-orca-ocean/30 bg-white"
         placeholder="What's on your mind?"
       />
       <div className="mt-3 flex items-center justify-between">
-        <label className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 cursor-pointer">
+        <label className="inline-flex items-center gap-2 text-orca-ocean hover:text-orca-navy cursor-pointer transition-colors">
           <FaImage />
           <span>Image</span>
           <input
@@ -65,19 +65,19 @@ export default function PostForm({ onCreated }) {
         </label>
         <button
           disabled={loading}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-xl disabled:opacity-60 hover:opacity-95 transition"
+          className="flex items-center gap-2 bg-orca-navy hover:bg-orca-ocean text-white px-4 py-2 rounded-xl disabled:opacity-60 transition-colors duration-200 font-medium"
         >
           <FaPaperPlane /> {loading ? 'Posting...' : 'Post'}
         </button>
       </div>
       {file && (
         <div className="mt-2">
-          <div className="text-sm text-gray-600">Selected: {file.name}</div>
+          <div className="text-sm text-orca-navy/80">Selected: {file.name}</div>
           {previewUrl && (
             <img
               src={previewUrl}
               alt="preview"
-              className="mt-2 max-h-64 rounded-xl border object-contain"
+              className="mt-2 max-h-64 rounded-xl border border-orca-soft/50 object-contain"
             />
           )}
         </div>

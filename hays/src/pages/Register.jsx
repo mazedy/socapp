@@ -47,9 +47,9 @@ const Register = () => {
     <div className="flex flex-col items-center justify-center min-h-screen">
       <form
         onSubmit={handleSubmit}
-        className="bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-xl w-80"
+        className="bg-orca-pale/80 backdrop-blur-lg p-6 rounded-2xl shadow-xl w-80 border border-orca-soft/20"
       >
-        <h2 className="text-white text-xl mb-4 text-center">Create Account</h2>
+        <h2 className="text-orca-navy text-2xl font-bold mb-4 text-center">Create Account</h2>
 
         <input
           type="text"
@@ -57,7 +57,7 @@ const Register = () => {
           placeholder="Username"
           value={formData.username}
           onChange={handleChange}
-          className="w-full mb-3 p-2 rounded bg-white/20 text-white"
+          className="w-full mb-3 p-2 rounded bg-white/90 text-orca-navy border border-orca-soft/50 focus:ring-2 focus:ring-orca-ocean/50 focus:border-orca-ocean outline-none transition"
           required
         />
         <input
@@ -66,7 +66,7 @@ const Register = () => {
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
-          className="w-full mb-3 p-2 rounded bg-white/20 text-white"
+          className="w-full mb-3 p-2 rounded bg-white/90 text-orca-navy border border-orca-soft/50 focus:ring-2 focus:ring-orca-ocean/50 focus:border-orca-ocean outline-none transition"
           required
         />
         <input
@@ -75,16 +75,16 @@ const Register = () => {
           placeholder="Password"
           value={formData.password}
           onChange={handleChange}
-          className="w-full mb-3 p-2 rounded bg-white/20 text-white"
+          className="w-full mb-3 p-2 rounded bg-blue-600/90 text-orca-navy border border-orca-soft/50 focus:ring-2 focus:ring-orca-ocean/50 focus:border-orca-ocean outline-none transition"
           required
         />
 
-        {error && <div className="text-red-400 mt-2 text-sm">{error}</div>}
-        {success && <div className="text-green-400 mt-2 text-sm">{success}</div>}
+        {error && <div className="text-red-500 mt-2 text-sm font-medium">{error}</div>}
+        {success && <div className="text-green-600 mt-2 text-sm font-medium">{success}</div>}
 
         <button
           type="submit"
-          className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg shadow-lg transition"
+          className="w-full mt-4 bg-orca-navy hover:bg-orca-ocean text-white py-2 rounded-lg shadow-lg transition-colors duration-200 font-medium"
         >
           Register
         </button>

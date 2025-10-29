@@ -65,7 +65,7 @@ export default function PostCard({ post, onChanged }) {
   const createdAt = post?.created_at || new Date().toISOString();
 
   return (
-    <div className="bg-white/90 backdrop-blur-md rounded-3xl p-5 shadow-lg border border-purple-200 hover:shadow-xl transition duration-300">
+    <div className="bg-orca-mist backdrop-blur-md rounded-3xl p-5 shadow-lg border border-orca-soft/50 hover:shadow-xl transition duration-300">
       <div className="flex items-start gap-4 mb-4">
         {/* Avatar */}
         <Link to={`/profile/${userData.id}`} className="shrink-0">
@@ -82,7 +82,7 @@ export default function PostCard({ post, onChanged }) {
               <img
                 src={src}
                 alt={userData.username}
-                className="h-12 w-12 rounded-full object-cover border-2 border-purple-300"
+                className="h-12 w-12 rounded-full object-cover border-2 border-orca-soft"
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = placeholder;
@@ -97,25 +97,20 @@ export default function PostCard({ post, onChanged }) {
           <div className="flex items-center gap-2">
             <Link
               to={`/profile/${userData.id}`}
-              className="font-semibold text-gray-900 hover:text-purple-700"
+              className="font-semibold text-orca-navy hover:text-orca-ocean"
             >
               {userData.name || userData.username || "Anonymous"}
             </Link>
-            <span className="text-sm text-gray-500">@{userData.username}</span>
+            <div className="mt-2 text-orca-navy">{post.content}</div>
             <span className="text-sm text-gray-400">
               • <TimeAgo date={createdAt} />
             </span>
             {pinned && (
-              <span className="ml-auto text-purple-600 text-xs flex items-center gap-1">
+              <span className="ml-auto text-orca-ocean text-xs flex items-center gap-1">
                 <FaThumbtack /> Pinned
               </span>
             )}
           </div>
-
-          {/* Post Text */}
-          <p className="mt-2 mb-3 whitespace-pre-wrap text-gray-800 text-[15px] leading-relaxed">
-            {post.content}
-          </p>
 
           {/* Post Image */}
           {post.image_url && (
@@ -126,29 +121,29 @@ export default function PostCard({ post, onChanged }) {
                   : `${BASE}${post.image_url.startsWith('/') ? '' : '/'}${post.image_url}`
               }
               alt="post"
-              className="rounded-2xl mb-3 max-h-[28rem] w-full object-cover border border-purple-100 shadow-md"
+              className="rounded-2xl mb-3 max-h-[28rem] w-full object-cover border border-orca-soft/50 shadow-md"
             />
           )}
 
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-6 pt-2 border-t border-purple-100 mt-2">
+          <div className="flex items-center gap-6 pt-2 border-t border-orca-soft/50 mt-2">
             <button
               onClick={toggleLike}
               disabled={submitting}
-              className={`flex items-center gap-2 text-sm font-medium transition ${
+              className={`flex items-center gap-1 ${
                 liked
-                  ? "text-purple-600 hover:text-purple-700"
-                  : "text-gray-500 hover:text-purple-600"
+                  ? "text-orca-ocean hover:text-orca-navy"
+                  : "text-orca-navy/80 hover:text-orca-ocean"
               }`}
             >
-              <FaHeart className={liked ? "text-purple-600" : ""} />
+              <FaHeart className={liked ? "text-orca-ocean" : ""} />
               <span>{likesCount}</span>
             </button>
 
             <button
               onClick={() => setShowComments((s) => !s)}
-              className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-purple-600 transition"
+              className="flex items-center gap-4 text-orca-navy/80 text-sm"
             >
               <FaRegComment />
               <span>{post.comments_count || 0}</span>
@@ -157,7 +152,7 @@ export default function PostCard({ post, onChanged }) {
             <button
               onClick={doTogglePin}
               className={`flex items-center gap-2 text-sm font-medium transition ${
-                pinned ? "text-purple-700" : "text-gray-500 hover:text-purple-700"
+                pinned ? "text-orca-ocean" : "text-orca-navy/80 hover:text-orca-ocean"
               }`}
             >
               <FaThumbtack />
@@ -169,15 +164,14 @@ export default function PostCard({ post, onChanged }) {
           {isOwner && (
             <div className="flex gap-3 mt-4 justify-end">
               <button
-                onClick={() => { setEditText(post.content || ""); setShowEditModal(true); }}
-                className="px-4 py-1.5 text-xs font-semibold rounded-full text-purple-700 bg-gradient-to-r from-purple-100 via-pink-100 to-purple-200 border border-purple-200 hover:from-purple-200 hover:to-pink-200 hover:scale-105 transition-all duration-300 shadow-sm hover:shadow-md"
+                onClick={() => setShowEditModal(true)}
+                className="px-3 py-1 text-sm rounded-full bg-orca-navy text-white hover:bg-orca-ocean transition-colors"
               >
-                ✏️ Edit
+                Edit
               </button>
-
               <button
                 onClick={() => setShowDeleteModal(true)}
-                className="px-4 py-1.5 text-xs font-semibold rounded-full text-red-600 bg-gradient-to-r from-red-100 via-pink-100 to-red-200 border border-red-200 hover:from-red-200 hover:to-pink-200 hover:scale-105 transition-all duration-300 shadow-sm hover:shadow-md"
+                className="px-3 py-1 text-sm rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
               >
                 🗑️ Delete
               </button>
@@ -189,25 +183,25 @@ export default function PostCard({ post, onChanged }) {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={() => setShowEditModal(false)}>
-          <div className="w-full max-w-md bg-white rounded-2xl border border-purple-100 shadow-xl p-5" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-orca-mist rounded-2xl p-6 w-full max-w-md mx-4 border border-orca-soft/50 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-purple-800">Edit Post</h3>
-              <button className="text-purple-700" onClick={() => setShowEditModal(false)}>✕</button>
+              <h3 className="text-lg font-semibold text-orca-navy">Edit Post</h3>
+              <button className="text-orca-navy hover:text-orca-ocean" onClick={() => setShowEditModal(false)}>✕</button>
             </div>
             <input
               type="text"
               value={editText}
               onChange={(e) => setEditText(e.target.value)}
-              className="w-full rounded-xl border border-purple-200 p-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-300"
+              className="mt-3 w-full rounded-xl border border-orca-soft/50 p-3 text-sm text-orca-navy focus:outline-none focus:ring-2 focus:ring-orca-ocean/30 bg-white"
               placeholder="What's on your mind?"
             />
             {/* Image picker */}
             <div className="mt-3">
               {editImagePreview ? (
                 <div className="relative">
-                  <img src={editImagePreview} alt="preview" className="rounded-2xl w-full max-h-64 object-cover border border-purple-100 shadow" />
+                  <img src={editImagePreview} alt="preview" className="rounded-2xl w-full max-h-64 object-cover border border-orca-soft/50 shadow" />
                   <div className="absolute top-2 right-2 flex gap-2">
-                    <label className="px-2 py-1 text-xs rounded-full bg-white/90 border border-purple-200 text-purple-700 cursor-pointer hover:bg-purple-50 shadow">
+                    <label className="px-2 py-1 text-xs rounded-full bg-white/90 border border-orca-soft/50 text-orca-navy cursor-pointer hover:bg-orca-pale shadow">
                       Change
                       <input
                         type="file"
@@ -224,9 +218,11 @@ export default function PostCard({ post, onChanged }) {
                       />
                     </label>
                     <button
-                      type="button"
-                      className="px-2 py-1 text-xs rounded-full bg-white/90 border border-red-200 text-red-600 hover:bg-red-50 shadow"
-                      onClick={() => { setEditImageFile(null); setEditImagePreview(null); }}
+                      onClick={() => {
+                        setEditImageFile(null);
+                        setEditImagePreview(null);
+                      }}
+                      className="px-2 py-1 text-xs rounded-full bg-white/90 border border-red-200 text-red-600 cursor-pointer hover:bg-red-50 shadow transition-colors"
                     >
                       Remove
                     </button>
@@ -251,8 +247,13 @@ export default function PostCard({ post, onChanged }) {
                 </label>
               )}
             </div>
-            <div className="mt-3 flex justify-end gap-2">
-              <button onClick={() => setShowEditModal(false)} className="px-3 py-2 rounded-lg text-purple-700 bg-purple-50 hover:bg-purple-100">Cancel</button>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="px-4 py-2 text-sm rounded-lg border border-orca-soft/50 text-orca-navy hover:bg-orca-pale/50 transition-colors"
+              >
+                Cancel
+              </button>
               <button
                 onClick={async () => {
                   if (!editText.trim() && !editImageFile) return;
@@ -276,9 +277,9 @@ export default function PostCard({ post, onChanged }) {
                   }
                 }}
                 disabled={savingEdit}
-                className={`px-3 py-2 rounded-lg text-white ${savingEdit ? 'bg-purple-300' : 'bg-purple-600 hover:bg-purple-700'}`}
+                className={`px-4 py-2 text-sm rounded-lg bg-orca-navy text-white hover:bg-orca-ocean disabled:opacity-60 transition-colors`}
               >
-                {savingEdit ? 'Saving...' : 'Save'}
+                {savingEdit ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>
@@ -288,10 +289,16 @@ export default function PostCard({ post, onChanged }) {
       {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={() => setShowDeleteModal(false)}>
-          <div className="w-full max-w-sm bg-white rounded-2xl border border-purple-100 shadow-xl p-5" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-semibold text-purple-800">Are you sure to delete this?</h3>
-            <div className="mt-4 flex justify-end gap-2">
-              <button onClick={() => setShowDeleteModal(false)} className="px-3 py-2 rounded-lg text-purple-700 bg-purple-50 hover:bg-purple-100">NO</button>
+          <div className="w-full max-w-sm bg-white rounded-2xl border border-orca-soft/50 shadow-xl p-5" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold text-orca-navy mb-4">Delete Post</h3>
+            <p className="text-orca-navy/80 mb-6">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 text-sm rounded-lg border border-orca-soft/50 text-orca-navy hover:bg-orca-pale/50 transition-colors"
+              >
+                Cancel
+              </button>
               <button
                 onClick={async () => {
                   try {
@@ -303,7 +310,7 @@ export default function PostCard({ post, onChanged }) {
                     toast.error("Failed to delete 😞");
                   }
                 }}
-                className="px-3 py-2 rounded-lg text-white bg-red-500 hover:bg-red-600"
+                className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
               >
                 YES
               </button>

@@ -338,13 +338,13 @@ export default function Chat() {
   }, [convos, query, tab]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300">
+    <div className="min-h-screen bg-gradient-to-br from-orca-pale to-orca-soft/50">
       <div className="container mx-auto px-4 py-6">
         <div className="flex gap-6">
           <Sidebar />
           <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Conversations panel */}
-            <div className="bg-white/85 rounded-2xl shadow-md border border-purple-100 p-3 md:col-span-1 overflow-hidden flex flex-col">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md border border-orca-soft/50 p-3 md:col-span-1 overflow-hidden flex flex-col">
               {/* Top bar */}
               <div className="px-2 pb-2">
                 <div className="flex items-center justify-between">
@@ -354,19 +354,22 @@ export default function Chat() {
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search Messenger"
-                    className="w-full rounded-xl border border-purple-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                    placeholder="Search messages..."
+                    className="w-full rounded-xl border border-orca-soft/50 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orca-ocean/30 bg-white/80"
                   />
                 </div>
                 <div className="mt-2 flex gap-2">
-                  <button onClick={() => setTab('all')} className={`px-3 py-1.5 rounded-full text-sm ${tab==='all' ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-800'}`}>All</button>
-                  <button onClick={() => setTab('unread')} className={`px-3 py-1.5 rounded-full text-sm ${tab==='unread' ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-800'}`}>Unread</button>
+                  <button onClick={() => setTab('all')} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab==='all' ? 'bg-orca-navy text-white shadow-md' : 'bg-orca-pale/50 text-orca-navy/80 hover:bg-orca-pale'}`}>All</button>
+                  <button onClick={() => setTab('unread')} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab==='unread' ? 'bg-orca-navy text-white shadow-md' : 'bg-orca-pale/50 text-orca-navy/80 hover:bg-orca-pale'}`}>Unread</button>
                 </div>
               </div>
               {/* List */}
               <div className="space-y-1 overflow-auto pr-2" style={{ maxHeight: '70vh' }}>
                 {loadingConvos ? (
-                  <div className="text-purple-600 px-2">Loading...</div>
+                  <div className="flex items-center justify-center p-4">
+                    <div className="w-5 h-5 border-2 border-orca-soft border-t-orca-navy rounded-full animate-spin"></div>
+                    <span className="ml-2 text-orca-navy/80">Loading...</span>
+                  </div>
                 ) : filteredConvos.length === 0 ? (
                   <div className="text-gray-600 px-2">No conversations yet.</div>
                 ) : (
@@ -374,19 +377,19 @@ export default function Chat() {
                     <button
                       key={String(c.id)}
                       onClick={() => openConversation(c.id)}
-                      className={`w-full text-left flex items-center gap-3 p-2 rounded-xl hover:bg-purple-50 ${String(activeId) === String(c.id) ? 'bg-purple-100' : ''}`}
+                      className={`w-full text-left flex items-center gap-3 p-3 rounded-xl transition-colors ${String(activeId) === String(c.id) ? 'bg-orca-pale/70 shadow-inner' : 'hover:bg-orca-pale/40'}`}
                     >
                       <Avatar src={c.user?.profile_pic || c.user?.avatar_url} username={c.user?.username} name={c.user?.name} size={40} showBorder={false} />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between">
-                          <div className="font-medium text-gray-900 truncate">{c.user?.username || 'User'}</div>
-                          <div className="text-[11px] text-gray-500 ml-2">{c.last_message?.timestamp ? renderShortTime(c.last_message.timestamp) : ''}</div>
+                          <div className="font-medium text-orca-navy truncate">{c.user?.username || 'User'}</div>
+                          <div className="text-xs text-orca-navy/60 ml-2">{c.last_message?.timestamp ? renderShortTime(c.last_message.timestamp) : ''}</div>
                         </div>
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className="text-xs text-gray-600 truncate">
+                          <div className="text-xs text-orca-navy/80 truncate">
                             {c.last_message ? ((c.last_message?.from_me ? 'You: ' : '') + (c.last_message?.content || '')) : 'No messages yet'}
                           </div>
-                          {(c.unread_count || 0) > 0 && <span className="ml-auto inline-block h-2.5 w-2.5 bg-blue-500 rounded-full" />}
+                          {(c.unread_count || 0) > 0 && <span className="ml-auto inline-flex items-center justify-center h-5 w-5 bg-orca-ocean text-white text-xs font-medium rounded-full">{c.unread_count}</span>}
                         </div>
                       </div>
                     </button>
@@ -396,9 +399,9 @@ export default function Chat() {
             </div>
 
             {/* Chat window */}
-            <div className="bg-white/85 rounded-2xl shadow-md border border-purple-100 p-3 md:col-span-2 flex flex-col min-h-[70vh]">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md border border-orca-soft/50 p-3 md:col-span-2 flex flex-col min-h-[70vh]">
               {/* Header */}
-              <div className="flex items-center gap-3 border-b border-purple-100 pb-3 mb-3">
+              <div className="flex items-center gap-3 border-b border-orca-soft/30 pb-3 mb-3">
                 {activeId ? (
                   <>
                     {(() => {
@@ -406,7 +409,7 @@ export default function Chat() {
                       return (
                         <>
                           <Avatar src={c?.user?.profile_pic || c?.user?.avatar_url} username={c?.user?.username} name={c?.user?.name} size={40} showBorder={false} />
-                          <div className="font-semibold text-gray-900">{c?.user?.username || 'Conversation'}</div>
+                          <div className="font-semibold text-orca-navy">{c?.user?.username || 'Conversation'}</div>
                         </>
                       );
                     })()}
@@ -419,23 +422,44 @@ export default function Chat() {
               {/* Messages */}
               <div className="flex-1 overflow-auto space-y-2 pr-2">
                 {loadingMsgs ? (
-                  <div className="text-purple-600">Loading...</div>
+                  <div className="flex items-center justify-center p-8">
+                    <div className="w-6 h-6 border-2 border-orca-soft border-t-orca-navy rounded-full animate-spin"></div>
+                    <span className="ml-3 text-orca-navy/80">Loading messages...</span>
+                  </div>
                 ) : messages.length === 0 ? (
                   <div className="text-gray-600">No messages yet.</div>
                 ) : (
                   messages.map((m) => {
                     const mine = String(m.sender_id) === String(user?.id);
                     return (
-                      <div key={m.id || `${m.timestamp || m.created_at}-${m.sender_id || ''}`} className={`flex items-end gap-2 ${mine ? 'justify-end' : ''}`}>
+                      <div key={m.id || `${m.timestamp || m.created_at}-${m.sender_id || ''}`} className={`flex items-end gap-2.5 ${mine ? 'justify-end' : ''}`}>
                         {!mine && (
-                          <Avatar src={(convos.find((c)=>String(c.id)===String(activeId))?.user?.profile_pic) || (convos.find((c)=>String(c.id)===String(activeId))?.user?.avatar_url)} username={(convos.find((c)=>String(c.id)===String(activeId))?.user?.username)} size={28} showBorder={false} />
+                          <Avatar 
+                            src={(convos.find((c)=>String(c.id)===String(activeId))?.user?.profile_pic) || (convos.find((c)=>String(c.id)===String(activeId))?.user?.avatar_url)} 
+                            username={(convos.find((c)=>String(c.id)===String(activeId))?.user?.username)} 
+                            size={32} 
+                            showBorder={false} 
+                            className="ring-2 ring-white"
+                          />
                         )}
-                        <div className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm shadow ${mine ? 'bg-purple-600 text-white' : 'bg-purple-100 text-gray-900'}`}>
-                          <div>{m.content}</div>
-                          <div className={`text-[10px] mt-1 ${mine ? 'text-purple-100' : 'text-gray-500'}`}>{renderTime(m.created_at || m.timestamp)}</div>
+                        <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-md ${
+                          mine 
+                            ? 'bg-orca-navy text-white rounded-br-none' 
+                            : 'bg-white text-orca-navy border border-orca-soft/30 rounded-bl-none'
+                        }`}>
+                          <div className="whitespace-pre-wrap break-words">{m.content}</div>
+                          <div className={`text-[11px] mt-1.5 text-right ${mine ? 'text-orca-pale/80' : 'text-orca-navy/60'}`}>
+                            {renderTime(m.created_at || m.timestamp)}
+                          </div>
                         </div>
                         {mine && (
-                          <Avatar src={user?.profile_pic || user?.avatar_url} username={user?.username} size={28} showBorder={false} />
+                          <Avatar 
+                            src={user?.profile_pic || user?.avatar_url} 
+                            username={user?.username} 
+                            size={32} 
+                            showBorder={false}
+                            className="ring-2 ring-white"
+                          />
                         )}
                       </div>
                     );
@@ -449,11 +473,21 @@ export default function Chat() {
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleSend(); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
                   placeholder="Type a message..."
-                  className="flex-1 rounded-xl border border-purple-200 text-purple-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                  className="flex-1 rounded-xl border border-orca-soft/50 text-orca-navy px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orca-ocean/30 bg-white/80"
                 />
-                <button onClick={handleSend} className="px-4 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700">Send</button>
+                <button 
+                  onClick={handleSend} 
+                  disabled={!input.trim()}
+                  className={`px-5 py-2.5 rounded-xl font-medium transition-colors ${
+                    input.trim() 
+                      ? 'bg-orca-navy text-white hover:bg-orca-ocean shadow-md' 
+                      : 'bg-orca-soft/30 text-orca-navy/50 cursor-not-allowed'
+                  }`}
+                >
+                  Send
+                </button>
               </div>
             </div>
           </div>

@@ -7,11 +7,10 @@ import Profile from '@/pages/Profile';
 import Search from '@/pages/Search';
 import PostDetails from '@/pages/PostDetails';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import NotFound from '@/pages/NotFound';
 import PeoplePage from '@/pages/PeoplePage';
 import ProfilePage from '@/pages/ProfilePage';
 import Chat from '@/pages/Chat';
-
+import FriendsPage from '@/pages/FriendsPage';
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
@@ -23,6 +22,7 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Feed />} />
+            <Route path="/feed" element={<Feed />} />
             <Route path="/user/:id" element={<Profile />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/me" element={<ProfilePage />} />
@@ -31,9 +31,9 @@ function App() {
             <Route path="/people" element={<PeoplePage />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/chat/:id" element={<Chat />} />
+            <Route path="/friends" element={<FriendsPage />} />
           </Route>
 
-          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </div>

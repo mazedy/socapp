@@ -43,22 +43,22 @@ export default function Feed() {
   };
 
   return (
-    <div className="px-4 py-6 bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 min-h-screen">
+    <div className="px-4 py-6 bg-gradient-to-br from-orca-pale to-orca-soft/50 min-h-screen">
       <div className="container mx-auto">
         <div className="flex gap-6">
           <Sidebar />
           <div className="flex-1 max-w-2xl mx-auto space-y-6">
             {/* Create Post Section */}
-            <div className="bg-white/80 backdrop-blur-lg p-5 rounded-3xl shadow-lg border border-purple-200">
+            <div className="bg-white/90 backdrop-blur-lg p-5 rounded-3xl shadow-lg border border-orca-soft/50">
               <CreatePost onPostCreated={handlePostCreated} />
             </div>
 
             {/* Feed Header */}
-            <div className="flex items-center justify-between text-purple-700 mt-2 mb-1">
-              <h2 className="text-lg font-semibold">🌸 Latest Posts</h2>
+            <div className="flex items-center justify-between text-orca-navy mt-2 mb-1">
+              <h2 className="text-lg font-semibold">🐋 Latest Posts</h2>
               <button
                 onClick={fetchPosts}
-                className="text-sm px-3 py-1 rounded-full bg-purple-600 text-white hover:bg-purple-700 active:scale-95 transition"
+                className="text-sm px-3 py-1 rounded-full bg-orca-navy text-white hover:bg-orca-ocean active:scale-95 transition-colors"
               >
                 Refresh
               </button>
@@ -66,7 +66,7 @@ export default function Feed() {
 
             {/* Posts Feed */}
             {loading ? (
-              <div className="text-center text-purple-500 mt-10 animate-pulse">
+              <div className="text-center text-orca-soft mt-10 animate-pulse">
                 Loading posts...
               </div>
             ) : posts.length === 0 ? (

@@ -41,10 +41,10 @@ export default function Sidebar() {
             size={48}
           />
           <div>
-            <div className="font-semibold text-gray-900">
+            <div className="font-semibold text-orca-navy">
               {user?.name || user?.username || 'User'}
             </div>
-            <div className="text-sm text-gray-500">@{user?.username || 'username'}</div>
+            <div className="text-sm text-orca-navy/70">@{user?.username || 'username'}</div>
           </div>
         </Link>
         <nav className="bg-white rounded-2xl shadow-md p-2 divide-y divide-gray-100">
@@ -52,7 +52,7 @@ export default function Sidebar() {
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-xl transition hover:bg-purple-50 ${isActive ? 'bg-purple-100 text-purple-700' : 'text-gray-700'}`
+                `flex items-center gap-3 px-3 py-2 rounded-xl transition hover:bg-orca-pale/50 ${isActive ? 'bg-orca-pale text-orca-navy' : 'text-orca-navy/80'}`
               }
             >
               <FaHome />
@@ -61,7 +61,7 @@ export default function Sidebar() {
             <NavLink
               to="/friends"
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-xl transition hover:bg-purple-50 ${isActive ? 'bg-purple-100 text-purple-700' : 'text-gray-700'}`
+                `flex items-center gap-3 px-3 py-2 rounded-xl transition hover:bg-orca-pale/50 ${isActive ? 'bg-orca-pale text-orca-navy' : 'text-orca-navy/80'}`
               }
             >
               <FaUserFriends />
@@ -70,14 +70,14 @@ export default function Sidebar() {
             <NavLink
               to="/chat"
               className={({ isActive }) =>
-                `relative flex items-center gap-3 px-3 py-2 rounded-xl transition hover:bg-purple-50 ${isActive ? 'bg-purple-100 text-purple-700' : 'text-gray-700'}`
+                `relative flex items-center gap-3 px-3 py-2 rounded-xl transition hover:bg-orca-pale/50 ${isActive ? 'bg-orca-pale text-orca-navy' : 'text-orca-navy/80'}`
               }
             >
               <FaEnvelope />
               <span>Messages</span>
               {unreadTotal > 0 && (
                 <span
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs leading-none px-2 py-1 rounded-full"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-medium leading-none px-2 py-1 rounded-full shadow"
                   title={`${unreadTotal} unread`}
                 >
                   {unreadTotal}

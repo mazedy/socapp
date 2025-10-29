@@ -85,28 +85,34 @@ export default function PeoplePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 px-4 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-orca-pale to-orca-soft/50 px-4 py-6">
       <div className="container mx-auto">
         <div className="flex gap-6">
           <Sidebar />
           <div className="flex-1 max-w-3xl mx-auto">
-            <h1 className="text-2xl font-bold text-purple-800 mb-4">Explore People</h1>
+            <h1 className="text-2xl font-bold text-orca-navy mb-6">Discover People</h1>
 
-        <div className="flex items-center gap-2 bg-white/80 border border-purple-200 rounded-full px-4 py-2 shadow-sm mb-4">
-          <FaSearch className="text-purple-500" />
+        <div className="flex items-center gap-3 bg-white/90 backdrop-blur-sm border border-orca-soft/50 rounded-xl px-4 py-2.5 shadow-sm mb-6 transition-colors focus-within:ring-2 focus-within:ring-orca-ocean/30">
+          <FaSearch className="text-orca-navy/60" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by username"
-            className="flex-1 bg-transparent outline-none text-gray-800 placeholder:text-purple-400"
+            placeholder="Search by username or name..."
+            className="flex-1 bg-transparent outline-none text-orca-navy placeholder:text-orca-soft/70"
             aria-label="Search users"
           />
         </div>
 
         {loading ? (
-          <div className="text-purple-600">Loading users...</div>
+          <div className="flex items-center justify-center p-8">
+            <div className="w-6 h-6 border-2 border-orca-soft border-t-orca-navy rounded-full animate-spin"></div>
+            <span className="ml-3 text-orca-navy/80">Loading users...</span>
+          </div>
         ) : filtered.length === 0 ? (
-          <div className="text-gray-600">No users match your search.</div>
+          <div className="text-center p-8 text-orca-navy/70">
+            <p className="mb-2">No users found</p>
+            <p className="text-sm">Try a different search term</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((u) => {
@@ -119,28 +125,37 @@ export default function PeoplePage() {
               return (
                 <div
                   key={u.id}
-                  className="group bg-white/80 rounded-2xl border border-purple-100 p-4 shadow-sm hover:shadow-md transition"
+                  className="group bg-white/90 backdrop-blur-sm rounded-2xl border border-orca-soft/50 p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5"
                 >
                   <div className="flex items-center gap-3">
-                    <img
-                      src={avatar || placeholder}
-                      alt={`${u.username}'s avatar`}
-                      className="h-12 w-12 rounded-full object-cover border-2 border-purple-200 shadow-sm cursor-pointer"
-                      onClick={() => navigate(`/profile/${u.id}`)}
-                      onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = placeholder; }}
-                    />
+                    {avatar ? (
+                      <img
+                        src={avatar}
+                        alt={`${u.username}'s avatar`}
+                        className="h-12 w-12 rounded-full object-cover border-2 border-white shadow-sm cursor-pointer"
+                        onClick={() => navigate(`/profile/${u.id}`)}
+                        onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = ''; }}
+                      />
+                    ) : (
+                      <div 
+                        className="h-12 w-12 rounded-full bg-orca-pale/70 flex items-center justify-center border-2 border-white shadow-sm cursor-pointer"
+                        onClick={() => navigate(`/profile/${u.id}`)}
+                      >
+                        <span className="text-lg font-semibold text-orca-navy/70">{(u.username?.[0] || 'U').toUpperCase()}</span>
+                      </div>
+                    )}
                     <div className="min-w-0">
                       <div
-                        className="font-semibold text-gray-900 truncate cursor-pointer hover:text-purple-700"
+                        className="font-semibold text-orca-navy truncate cursor-pointer hover:text-orca-ocean transition-colors"
                         onClick={() => navigate(`/profile/${u.id}`)}
                         title={u.username}
                       >
                         {u.username}
                       </div>
                       {u.bio && (
-                        <div className="text-xs text-gray-600 truncate">{u.bio}</div>
+                        <div className="text-xs text-orca-navy/80 truncate">{u.bio}</div>
                       )}
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-orca-navy/60 mt-0.5">
                         <span className="mr-3">{u.followers_count ?? 0} followers</span>
                         <span>{u.following_count ?? 0} following</span>
                       </div>
@@ -153,10 +168,10 @@ export default function PeoplePage() {
                         aria-label={`Unfollow ${u.username}`}
                         disabled={busy}
                         onClick={() => toggleFollow(u, false)}
-                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition transform ${
+                        className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
                           busy
-                            ? "bg-purple-400 text-white cursor-not-allowed"
-                            : "bg-purple-600 text-white hover:bg-purple-700 hover:scale-[1.02]"
+                            ? "bg-orca-soft/50 text-orca-navy/50 cursor-not-allowed"
+                            : "bg-orca-navy text-white hover:bg-orca-ocean hover:shadow-md"
                         }`}
                         title="Unfollow"
                       >
@@ -165,7 +180,7 @@ export default function PeoplePage() {
                         ) : (
                           <>
                             <FaUserCheck />
-                            <span className="group-hover:hidden">Following ✓</span>
+                            <span className="group-hover:hidden">Following</span>
                             <span className="hidden group-hover:inline">Unfollow</span>
                           </>
                         )}
@@ -175,10 +190,10 @@ export default function PeoplePage() {
                         aria-label={`Follow ${u.username}`}
                         disabled={busy}
                         onClick={() => toggleFollow(u, true)}
-                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition transform ${
+                        className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
                           busy
-                            ? "bg-purple-300 text-purple-900 cursor-not-allowed"
-                            : "bg-white text-purple-700 border border-purple-300 hover:bg-purple-50 hover:scale-[1.02]"
+                            ? "bg-orca-soft/50 text-orca-navy/50 cursor-not-allowed"
+                            : "bg-white text-orca-navy border border-orca-soft/70 hover:bg-orca-pale/50 hover:shadow-md"
                         }`}
                         title={followsMe ? "Follow Back" : "Follow"}
                       >
