@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: Optional[str] = None
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    
+    @property
+    def jwt_secret_value(self) -> str:
+        """Return JWT_SECRET_KEY if set, otherwise fall back to JWT_SECRET."""
+        return self.JWT_SECRET_KEY or self.JWT_SECRET or ""
 
     # Cloudinary
     CLOUDINARY_CLOUD_NAME: Optional[str] = None
