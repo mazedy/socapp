@@ -67,7 +67,7 @@ export default function Navbar() {
               to="/login"
               className="px-4 py-2 text-sm font-medium text-orca-navy bg-orca-pale hover:bg-white rounded-md transition-colors"
             >
-              Log in
+              Sign in
             </NavLink>
             <NavLink
               to="/register"

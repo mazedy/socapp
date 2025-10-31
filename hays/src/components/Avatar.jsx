@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { API_BASE_URL } from '@/api/axios';
+// Use Vite's environment variables for the base URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export default function Avatar({
   src,

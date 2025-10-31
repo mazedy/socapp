@@ -22,75 +22,70 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  useEffect(() => {
+  // Fetch current user from backend
+  const fetchUser = async (attempt = 0) => {
     if (!token) {
       setLoading(false);
+      setUser(null);
       return;
     }
 
-    let cancelled = false;
-    const fetchUser = async (attempt = 0) => {
-      try {
-        const res = await api.get('/auth/users/me');
-        if (cancelled) return;
-        setUser(res.data);
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-        // If backend is unreachable (no response), retry a few times and show friendly error
-        if (!error.response) {
-          if (attempt < 3) {
-            console.warn('Retrying user fetch in 1s...');
-            setTimeout(() => fetchUser(attempt + 1), 1000);
-            return;
-          }
-          if (!cancelled) {
-            toast.error('Cannot connect to server. Please make sure the backend is running.');
-          }
-        } else {
-          // For HTTP errors, treat as auth failure
-          localStorage.removeItem('token');
-          setToken(null);
-          setUser(null);
-          if (error.response?.status !== 401) {
-            toast.error('Failed to load user profile');
-          }
+    try {
+      const res = await api.get('/auth/users/me');
+      setUser(res.data);
+    } catch (error) {
+      console.error('Failed to fetch user:', error.response?.data || error.message);
+
+      if (!error.response) {
+        // Network error or backend unreachable
+        if (attempt < 3) {
+          console.warn('Retrying user fetch in 1s...');
+          setTimeout(() => fetchUser(attempt + 1), 1000);
+          return;
         }
-      } finally {
-        if (!cancelled) setLoading(false);
+        toast.error('Cannot connect to server. Please make sure the backend is running.');
+      } else if (error.response.status === 500) {
+        toast.error('Server error while fetching user. Please try again later.');
+      } else if (error.response.status === 401 || error.response.status === 403) {
+        // Unauthorized or session expired
+        localStorage.removeItem('token');
+        setToken(null);
+        setUser(null);
+        toast.info('Session expired. Please log in again.');
+        navigate('/login');
+      } else {
+        toast.error('Failed to load user profile');
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUser();
-    return () => {
-      cancelled = true;
-    };
-  }, [token, toast]);
+  }, [token]);
 
-  const login = async (email, password) => {
+  const login = async (credentials) => {
     setAuthLoading(true);
     try {
-      // Use FormData for OAuth2 compatibility (uses username field for both email/username)
-      const formData = new FormData();
-      formData.append('username', email); // Backend accepts email in username field
-      formData.append('password', password);
-
-      const { data } = await api.post('/auth/login', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const { data } = await api.post('/auth/login-with-username', {
+        username: credentials.username,
+        password: credentials.password,
       });
 
       const newToken = data?.access_token;
+      if (!newToken) throw new Error('No access token received');
 
-      if (!newToken) {
-        throw new Error('No token received from server');
-      }
-
+      // Store token and update state
       localStorage.setItem('token', newToken);
       setToken(newToken);
-      toast.success('Logged in successfully');
-      navigate('/');
-      return data;
+
+      // Fetch user after login
+      await fetchUser();
+
+      toast.success('Login successful!');
+      navigate('/feed'); // immediate redirect to feed
+      return user;
     } catch (e) {
       const errorMessage = e.response?.data?.detail || e.message || 'Login failed';
       toast.error(errorMessage);
@@ -103,28 +98,26 @@ export function AuthProvider({ children }) {
   const register = async (payload) => {
     setAuthLoading(true);
     try {
-      // Backend expects: username, email, password
       const { data } = await api.post('/auth/register', {
         username: payload.username,
         email: payload.email,
         password: payload.password,
       });
 
-      // Backend returns token on registration
       if (data?.access_token) {
         localStorage.setItem('token', data.access_token);
         setToken(data.access_token);
         toast.success('Registration successful!');
-        navigate('/');
+        await fetchUser();
+        navigate('/feed');
       } else {
         toast.success('Registration successful, please login');
         navigate('/login');
       }
+
       return data;
     } catch (e) {
       const errorMessage = e.response?.data?.detail || e.message || 'Registration failed';
-
-      // Handle duplicate email/username error
       if (e.response?.status === 400 && errorMessage.includes('already registered')) {
         toast.error('Email or username already exists');
       } else {
@@ -145,9 +138,7 @@ export function AuthProvider({ children }) {
     navigate('/login');
   };
 
-  const updateUser = (userData) => {
-    setUser(userData);
-  };
+  const updateUser = (userData) => setUser(userData);
 
   const value = useMemo(
     () => ({
@@ -161,7 +152,7 @@ export function AuthProvider({ children }) {
       logout,
       isAuthenticated: !!token && !!user,
     }),
-    [token, user, loading, authLoading],
+    [token, user, loading, authLoading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -169,8 +160,6 @@ export function AuthProvider({ children }) {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
