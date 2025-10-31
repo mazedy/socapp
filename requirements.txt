@@ -8,5 +8,7 @@ python-jose[cryptography]==3.3.0
 python-multipart==0.0.6
 pydantic-settings==2.0.3
 argon2-cffi>=23.1.0
-python-socketio
+python-socketio==5.11.4
 cloudinary==1.44.1
+fastapi-mail==1.4.1
+email-validator==2.1.0.post1
