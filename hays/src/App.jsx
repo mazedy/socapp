@@ -4,7 +4,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from '@/components/Navbar';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
-import EmailVerification from '@/pages/EmailVerification';
 import Feed from '@/pages/Feed';
 import Profile from '@/pages/Profile';
 import Search from '@/pages/Search';
@@ -36,7 +35,6 @@ function App() {
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/verify-email" element={<EmailVerification />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
